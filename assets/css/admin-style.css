@@ -1,0 +1,288 @@
+/* ============================================================
+   Misaha Booking System — Admin Styles
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --ma-primary:   #6c47ff;
+    --ma-primary-l: #ede9ff;
+    --ma-success:   #10b981;
+    --ma-warning:   #f59e0b;
+    --ma-danger:    #ef4444;
+    --ma-dark:      #0f172a;
+    --ma-mid:       #64748b;
+    --ma-border:    #e2e8f0;
+    --ma-light:     #f8fafc;
+    --ma-white:     #ffffff;
+    --ma-radius:    12px;
+    --ma-radius-sm: 8px;
+    --ma-shadow:    0 4px 20px rgba(0,0,0,.07);
+    --ma-shadow-sm: 0 1px 4px rgba(0,0,0,.06);
+    --ma-font:      'Inter', -apple-system, sans-serif;
+}
+
+/* ── Wrap ────────────────────────────────────────────────── */
+.misaha-admin-wrap {
+    max-width: 1200px;
+    font-family: var(--ma-font);
+}
+
+.misaha-admin-title {
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    color: var(--ma-dark) !important;
+    margin-bottom: 24px !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.3px;
+}
+
+.misaha-logo-icon { font-size: 26px; }
+
+/* ── Cards ────────────────────────────────────────────────── */
+.misaha-admin-card {
+    background: var(--ma-white);
+    border: 1px solid var(--ma-border);
+    border-radius: var(--ma-radius);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    box-shadow: var(--ma-shadow);
+}
+
+.misaha-admin-card h2 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ma-dark);
+    margin: 0 0 20px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--ma-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── Stat Cards ───────────────────────────────────────────── */
+.misaha-stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.misaha-stat-card {
+    background: var(--ma-white);
+    border: 1px solid var(--ma-border);
+    border-radius: var(--ma-radius);
+    padding: 24px;
+    box-shadow: var(--ma-shadow-sm);
+    position: relative;
+    overflow: hidden;
+    transition: all .2s ease;
+}
+
+.misaha-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ma-shadow);
+}
+
+.misaha-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    border-radius: var(--ma-radius) var(--ma-radius) 0 0;
+}
+
+.misaha-stat-blue::before   { background: linear-gradient(90deg, #6c47ff, #0ea5e9); }
+.misaha-stat-green::before  { background: linear-gradient(90deg, #10b981, #34d399); }
+.misaha-stat-orange::before { background: linear-gradient(90deg, #f59e0b, #fb923c); }
+.misaha-stat-purple::before { background: linear-gradient(90deg, #8b5cf6, #6c47ff); }
+
+.misaha-stat-icon  { font-size: 30px; margin-bottom: 10px; }
+.misaha-stat-value { font-size: 28px; font-weight: 800; color: var(--ma-dark); letter-spacing: -0.6px; margin-bottom: 4px; }
+.misaha-stat-label { font-size: 12px; color: var(--ma-mid); font-weight: 500; text-transform: uppercase; letter-spacing: .6px; }
+
+/* ── Tables ──────────────────────────────────────────────── */
+.misaha-admin-table {
+    border-radius: var(--ma-radius-sm) !important;
+    overflow: hidden;
+    border: 1px solid var(--ma-border) !important;
+    font-size: 13px;
+}
+
+.misaha-admin-table th {
+    background: var(--ma-light) !important;
+    color: var(--ma-mid) !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: .6px !important;
+    padding: 12px 16px !important;
+    border-bottom: 1px solid var(--ma-border) !important;
+}
+
+.misaha-admin-table td {
+    padding: 12px 16px !important;
+    border-bottom: 1px solid var(--ma-border) !important;
+    vertical-align: middle !important;
+    color: var(--ma-dark);
+}
+
+.misaha-admin-table tr:last-child td { border-bottom: none !important; }
+.misaha-admin-table tr:hover td { background: var(--ma-light) !important; }
+
+/* ── Badges ──────────────────────────────────────────────── */
+.misaha-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+}
+
+.misaha-badge-pending    { background: #fef3c7; color: #92400e; }
+.misaha-badge-confirmed  { background: #d1fae5; color: #065f46; }
+.misaha-badge-paid       { background: #d1fae5; color: #065f46; }
+.misaha-badge-active     { background: #d1fae5; color: #065f46; }
+.misaha-badge-cancelled  { background: #fee2e2; color: #991b1b; }
+.misaha-badge-failed     { background: #fee2e2; color: #991b1b; }
+.misaha-badge-inactive   { background: #f1f5f9; color: #475569; }
+.misaha-badge-day        { background: #fef3c7; color: #92400e; }
+.misaha-badge-week       { background: #dbeafe; color: #1e40af; }
+.misaha-badge-month      { background: #ede9fe; color: #5b21b6; }
+.misaha-badge-refunded   { background: #e0f2fe; color: #075985; }
+
+/* ── Filter Bar ──────────────────────────────────────────── */
+.misaha-filter-bar {
+    background: var(--ma-white);
+    border: 1px solid var(--ma-border);
+    border-radius: var(--ma-radius);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.misaha-filter-bar form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+}
+
+.misaha-filter-bar select,
+.misaha-filter-bar input[type="date"] {
+    padding: 8px 12px;
+    border: 1px solid var(--ma-border);
+    border-radius: var(--ma-radius-sm);
+    font-family: var(--ma-font);
+    font-size: 13px;
+    outline: none;
+    transition: all .2s;
+}
+
+.misaha-filter-bar select:focus,
+.misaha-filter-bar input[type="date"]:focus {
+    border-color: var(--ma-primary);
+    box-shadow: 0 0 0 3px rgba(108,71,255,.1);
+}
+
+/* ── Admin Forms ─────────────────────────────────────────── */
+.misaha-admin-form {
+    max-width: 900px;
+}
+
+.misaha-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.misaha-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.misaha-form-group-full {
+    grid-column: 1 / -1;
+}
+
+.misaha-form-group label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--ma-mid);
+}
+
+.misaha-form-group input[type="text"],
+.misaha-form-group input[type="number"],
+.misaha-form-group input[type="date"],
+.misaha-form-group select,
+.misaha-form-group textarea {
+    padding: 10px 14px;
+    border: 1.5px solid var(--ma-border);
+    border-radius: var(--ma-radius-sm);
+    font-family: var(--ma-font);
+    font-size: 14px;
+    color: var(--ma-dark);
+    background: var(--ma-white);
+    outline: none;
+    transition: all .2s;
+}
+
+.misaha-form-group input:focus,
+.misaha-form-group select:focus,
+.misaha-form-group textarea:focus {
+    border-color: var(--ma-primary);
+    box-shadow: 0 0 0 3px rgba(108,71,255,.1);
+}
+
+.misaha-form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* ── Checkbox ────────────────────────────────────────────── */
+.misaha-form-group label input[type="checkbox"] {
+    margin-right: 8px;
+    accent-color: var(--ma-primary);
+    width: 16px;
+    height: 16px;
+}
+
+.misaha-form-group label:has(input[type="checkbox"]) {
+    font-size: 13px;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ma-dark);
+    font-weight: 500;
+    flex-direction: row;
+    align-items: center;
+}
+
+/* ── Admin Msg ───────────────────────────────────────────── */
+.misaha-admin-msg {
+    margin-top: 12px;
+    padding: 10px 16px;
+    border-radius: var(--ma-radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.misaha-admin-msg.success { background: #d1fae5; color: #065f46; }
+.misaha-admin-msg.error   { background: #fee2e2; color: #991b1b; }
+
+/* ── Menu Icon ───────────────────────────────────────────── */
+#adminmenu .toplevel_page_misaha-booking .wp-menu-image {
+    font-size: 18px;
+}
