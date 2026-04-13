@@ -1,11 +1,33 @@
 /**
  * Misaha Booking System — Frontend JavaScript
  * Handles: Hall Booking Calendar, Seat Map, User Dashboard tabs
+ * Supports: Arabic (RTL) via misahaVars.i18n translations
  */
 (function ($) {
     'use strict';
 
-    const { ajaxUrl, nonce, currency, isLoggedIn, loginUrl } = window.misahaVars || {};
+    const { ajaxUrl, nonce, currency, isLoggedIn, loginUrl, isRtl, locale, i18n } = window.misahaVars || {};
+
+    /* ================================================================
+       TRANSLATION HELPER
+    ================================================================ */
+
+    /**
+     * Translate a string using the i18n object passed from PHP.
+     * Falls back to the English key if no translation found.
+     */
+    function t(key) {
+        return (i18n && i18n[key]) ? i18n[key] : key;
+    }
+
+    /**
+     * Get locale string for date formatting.
+     * Maps ar_* → 'ar-LY' etc.
+     */
+    function getDateLocale() {
+        if (locale && locale.indexOf('ar') === 0) return 'ar-LY';
+        return 'en-GB';
+    }
 
     /* ================================================================
        UTILITY HELPERS
@@ -62,7 +84,7 @@
         let selectedHallName = '';
         let selectedHallPrice = 0;
         let selectedDate     = '';
-        let selectedSlot     = null; // { start, end, label }
+        let selectedSlot     = null;
         let discountData     = null;
 
         /* ── Hall Selection ─────────────────────────────────── */
@@ -84,11 +106,11 @@
             selectedDate = $wrap.find('#misaha-booking-date').val();
 
             if (!selectedHallId) {
-                alert('Please select a hall first.');
+                alert(t('Please select a hall first.'));
                 return;
             }
             if (!selectedDate) {
-                alert('Please pick a date.');
+                alert(t('Please pick a date.'));
                 return;
             }
 
@@ -99,7 +121,7 @@
 
         function renderSlotInfo() {
             const dateObj = new Date(selectedDate + 'T00:00:00');
-            const dateStr = dateObj.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const dateStr = dateObj.toLocaleDateString(getDateLocale(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             $('#misaha-selected-info').html(
                 '🏛️ <strong>' + selectedHallName + '</strong> &nbsp;|&nbsp; 📅 <strong>' + dateStr + '</strong>'
             );
@@ -121,7 +143,7 @@
             .done(function (res) {
                 hideLoading($loading);
                 if (!res.success || !res.data.length) {
-                    $grid.html('<p style="grid-column:1/-1;text-align:center;color:#64748b;">No slots available for this date.</p>');
+                    $grid.html('<p style="grid-column:1/-1;text-align:center;color:#64748b;">' + t('No slots available for this date.') + '</p>');
                     return;
                 }
                 res.data.forEach(function (slot) {
@@ -135,14 +157,14 @@
                     }).html(
                         '<span class="misaha-slot-time">' + slot.label + '</span>' +
                         '<span class="misaha-slot-price">' + fmt(slot.price) + '</span>' +
-                        '<span class="misaha-slot-tag">' + (isBooked ? 'Booked' : 'Available') + '</span>'
+                        '<span class="misaha-slot-tag">' + (isBooked ? t('Booked') : t('Available')) + '</span>'
                     );
                     $grid.append($slot);
                 });
             })
             .fail(function () {
                 hideLoading($loading);
-                $grid.html('<p style="color:#ef4444;">Failed to load slots. Please try again.</p>');
+                $grid.html('<p style="color:#ef4444;">' + t('Failed to load slots. Please try again.') + '</p>');
             });
         }
 
@@ -172,26 +194,26 @@
 
         function renderSummary() {
             const dateObj = new Date(selectedDate + 'T00:00:00');
-            const dateStr = dateObj.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const dateStr = dateObj.toLocaleDateString(getDateLocale(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             $('#misaha-booking-summary').html(
-                '<h3>📋 Booking Summary</h3>' +
-                '<div class="misaha-summary-row"><span class="label">Hall</span><span class="value">' + selectedHallName + '</span></div>' +
-                '<div class="misaha-summary-row"><span class="label">Date</span><span class="value">' + dateStr + '</span></div>' +
-                '<div class="misaha-summary-row"><span class="label">Time Slot</span><span class="value">' + selectedSlot.label + '</span></div>' +
-                '<div class="misaha-summary-row"><span class="label">Duration</span><span class="value">1 hour</span></div>'
+                '<h3>📋 ' + t('Booking Summary') + '</h3>' +
+                '<div class="misaha-summary-row"><span class="label">' + t('Hall') + '</span><span class="value">' + selectedHallName + '</span></div>' +
+                '<div class="misaha-summary-row"><span class="label">' + t('Date') + '</span><span class="value">' + dateStr + '</span></div>' +
+                '<div class="misaha-summary-row"><span class="label">' + t('Time Slot') + '</span><span class="value">' + selectedSlot.label + '</span></div>' +
+                '<div class="misaha-summary-row"><span class="label">' + t('Duration') + '</span><span class="value">' + t('1 hour') + '</span></div>'
             );
         }
 
         function renderPriceBreakdown(basePrice, discAmount) {
             const disc     = discAmount || 0;
-            const final    = Math.max(0, basePrice - disc);
+            const finalAmt = Math.max(0, basePrice - disc);
             const discLine = disc > 0
-                ? '<div class="misaha-price-line discount"><span>Discount</span><span>− ' + fmt(disc) + '</span></div>'
+                ? '<div class="misaha-price-line discount"><span>' + t('Discount') + '</span><span>− ' + fmt(disc) + '</span></div>'
                 : '';
             $('#misaha-price-breakdown').html(
-                '<div class="misaha-price-line"><span>Base Price</span><span>' + fmt(basePrice) + '</span></div>' +
+                '<div class="misaha-price-line"><span>' + t('Base Price') + '</span><span>' + fmt(basePrice) + '</span></div>' +
                 discLine +
-                '<div class="misaha-price-line total"><span>Total</span><span>' + fmt(final) + '</span></div>'
+                '<div class="misaha-price-line total"><span>' + t('Total') + '</span><span>' + fmt(finalAmt) + '</span></div>'
             );
         }
 
@@ -201,11 +223,11 @@
             const $msg = $wrap.find('#misaha-discount-msg');
 
             if (!code) {
-                showMsg($msg, 'Please enter a discount code.', 'error');
+                showMsg($msg, t('Please enter a discount code.'), 'error');
                 return;
             }
 
-            $(this).prop('disabled', true).text('Checking…');
+            $(this).prop('disabled', true).text(t('Checking…'));
 
             $.post(ajaxUrl, {
                 action: 'misaha_validate_discount',
@@ -221,15 +243,15 @@
                     renderPriceBreakdown(selectedSlot.price, discountData.discount_amount);
                 } else {
                     discountData = null;
-                    showMsg($msg, '❌ ' + (res.data ? res.data.message : 'Invalid code.'), 'error');
+                    showMsg($msg, '❌ ' + (res.data ? res.data.message : t('Invalid code.')), 'error');
                     renderPriceBreakdown(selectedSlot.price, 0);
                 }
             })
             .fail(function () {
-                showMsg($msg, '❌ Network error.', 'error');
+                showMsg($msg, '❌ ' + t('Network error.'), 'error');
             })
             .always(function () {
-                $wrap.find('#misaha-apply-discount').prop('disabled', false).text('Apply');
+                $wrap.find('#misaha-apply-discount').prop('disabled', false).text(t('Apply'));
             });
         });
 
@@ -239,7 +261,7 @@
                 window.location.href = loginUrl;
                 return;
             }
-            const $btn    = $(this).prop('disabled', true).text('Processing…');
+            const $btn    = $(this).prop('disabled', true).text(t('Processing…'));
             const $result = $wrap.find('#misaha-booking-result').hide().removeClass('success error');
             const code    = $wrap.find('#misaha-discount-code').val().trim().toUpperCase();
 
@@ -256,7 +278,7 @@
                     const d = res.data;
                     if (d.payment_url) {
                         showResult($result,
-                            '✅ Booking <strong>#' + d.booking_id + '</strong> created! Redirecting to payment…',
+                            '✅ ' + t('Booking') + ' <strong>#' + d.booking_id + '</strong> ' + t('created! Redirecting to payment…'),
                             'success'
                         );
                         setTimeout(function () {
@@ -264,19 +286,19 @@
                         }, 1800);
                     } else {
                         showResult($result,
-                            '✅ Booking <strong>#' + d.booking_id + '</strong> created! Total: <strong>' + fmt(d.final_price) + '</strong>. Our team will contact you for payment.',
+                            '✅ ' + t('Booking') + ' <strong>#' + d.booking_id + '</strong> ' + t('created! Total:') + ' <strong>' + fmt(d.final_price) + '</strong>. ' + t('Our team will contact you for payment.'),
                             'success'
                         );
-                        $btn.text('Booked!');
+                        $btn.text(t('Booked!'));
                     }
                 } else {
                     showResult($result, '❌ ' + res.data.message, 'error');
-                    $btn.prop('disabled', false).text('💳 Proceed to Payment');
+                    $btn.prop('disabled', false).text('💳 ' + t('Proceed to Payment'));
                 }
             })
             .fail(function () {
-                showResult($result, '❌ Network error. Please try again.', 'error');
-                $btn.prop('disabled', false).text('💳 Proceed to Payment');
+                showResult($result, '❌ ' + t('Network error. Please try again.'), 'error');
+                $btn.prop('disabled', false).text('💳 ' + t('Proceed to Payment'));
             });
         });
 
@@ -321,7 +343,7 @@
             selectedHallId   = $btn.data('hall-id');
             selectedHallName = $btn.data('hall-name');
 
-            $wrap.find('#misaha-hall-banner').html('🏛️ <strong>' + selectedHallName + '</strong> — click a seat to select it');
+            $wrap.find('#misaha-hall-banner').html('🏛️ <strong>' + selectedHallName + '</strong> — ' + t('click a seat to select it'));
             goToSeatStep($wrap, 1, 2, 1, 2);
             fetchSeats();
         });
@@ -342,7 +364,7 @@
             .done(function (res) {
                 hideLoading($loading);
                 if (!res.success || !res.data.length) {
-                    $grid.html('<p style="text-align:center;color:#64748b;padding:30px 0;">No seats available for this hall.</p>');
+                    $grid.html('<p style="text-align:center;color:#64748b;padding:30px 0;">' + t('No seats available for this hall.') + '</p>');
                     return;
                 }
 
@@ -363,7 +385,7 @@
                             class: 'misaha-seat' + (isOccupied ? ' seat-occupied' : ''),
                             'data-seat-id':  seat.id,
                             'data-seat-num': seat.seat_number,
-                            title: seat.seat_number + (isOccupied ? ' (Occupied)' : ' (Available)'),
+                            title: seat.seat_number + (isOccupied ? ' (' + t('Occupied') + ')' : ' (' + t('Available') + ')'),
                         }).text(seat.seat_number.replace(rowLabel, ''));
                         $row.append($seat);
                     });
@@ -372,7 +394,7 @@
             })
             .fail(function () {
                 hideLoading($loading);
-                $grid.html('<p style="color:#ef4444;padding:20px;">Failed to load seats.</p>');
+                $grid.html('<p style="color:#ef4444;padding:20px;">' + t('Failed to load seats.') + '</p>');
             });
         }
 
@@ -388,7 +410,7 @@
         /* ── Go to Pass Step ────────────────────────────────── */
         $wrap.on('click', '#misaha-sm-to-pass', function () {
             $wrap.find('#misaha-selected-seat-info').html(
-                '💺 Selected: <strong>' + selectedSeatNum + '</strong> in <strong>' + selectedHallName + '</strong>'
+                '💺 ' + t('Selected') + ': <strong>' + selectedSeatNum + '</strong> — <strong>' + selectedHallName + '</strong>'
             );
             $wrap.find('.misaha-pass-card').removeClass('selected');
             $wrap.find('.misaha-pick-pass').removeClass('misaha-btn-primary').addClass('misaha-btn-outline');
@@ -404,7 +426,6 @@
             selectedPassType  = $btn.data('pass');
             selectedPassPrice = parseFloat($btn.data('price'));
 
-            // Set minimum start date: today
             const today = new Date().toISOString().split('T')[0];
             $wrap.find('#misaha-pass-start').attr('min', today).val(today);
 
@@ -414,7 +435,6 @@
             $btn.removeClass('misaha-btn-outline').addClass('misaha-btn-primary');
             $wrap.find('#misaha-start-date-row').slideDown(200);
 
-            // Small delay then go to step 4
             setTimeout(function () {
                 if (!$wrap.find('#misaha-pass-start').val()) return;
                 goToConfirmStep();
@@ -436,19 +456,19 @@
 
         function renderPassSummary() {
             const startDate  = $wrap.find('#misaha-pass-start').val();
-            const passLabels = { day: 'Day Pass', week: 'Weekly Pass', month: 'Monthly Pass' };
+            const passLabels = { day: t('Day Pass'), week: t('Weekly Pass'), month: t('Monthly Pass') };
             const endDates   = getEndDate(startDate, selectedPassType);
             const fmtDate = function (d) {
-                return new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                return new Date(d + 'T00:00:00').toLocaleDateString(getDateLocale(), { day: 'numeric', month: 'long', year: 'numeric' });
             };
 
             $wrap.find('#misaha-pass-summary').html(
-                '<h3>📋 Pass Summary</h3>' +
-                '<div class="misaha-summary-row"><span class="label">Hall</span><span class="value">' + selectedHallName + '</span></div>' +
-                '<div class="misaha-summary-row"><span class="label">Seat</span><span class="value">' + selectedSeatNum + '</span></div>' +
-                '<div class="misaha-summary-row"><span class="label">Pass Type</span><span class="value">' + (passLabels[selectedPassType] || selectedPassType) + '</span></div>' +
-                '<div class="misaha-summary-row"><span class="label">Start Date</span><span class="value">' + fmtDate(startDate) + '</span></div>' +
-                '<div class="misaha-summary-row"><span class="label">End Date</span><span class="value">' + fmtDate(endDates) + '</span></div>'
+                '<h3>📋 ' + t('Pass Summary') + '</h3>' +
+                '<div class="misaha-summary-row"><span class="label">' + t('Hall') + '</span><span class="value">' + selectedHallName + '</span></div>' +
+                '<div class="misaha-summary-row"><span class="label">' + t('Seat') + '</span><span class="value">' + selectedSeatNum + '</span></div>' +
+                '<div class="misaha-summary-row"><span class="label">' + t('Pass Type') + '</span><span class="value">' + (passLabels[selectedPassType] || selectedPassType) + '</span></div>' +
+                '<div class="misaha-summary-row"><span class="label">' + t('Start Date') + '</span><span class="value">' + fmtDate(startDate) + '</span></div>' +
+                '<div class="misaha-summary-row"><span class="label">' + t('End Date') + '</span><span class="value">' + fmtDate(endDates) + '</span></div>'
             );
         }
 
@@ -460,15 +480,15 @@
         }
 
         function renderPassPriceBreakdown(basePrice, discAmount) {
-            const disc  = discAmount || 0;
-            const final = Math.max(0, basePrice - disc);
+            const disc     = discAmount || 0;
+            const finalAmt = Math.max(0, basePrice - disc);
             const discLine = disc > 0
-                ? '<div class="misaha-price-line discount"><span>Discount</span><span>− ' + fmt(disc) + '</span></div>'
+                ? '<div class="misaha-price-line discount"><span>' + t('Discount') + '</span><span>− ' + fmt(disc) + '</span></div>'
                 : '';
             $wrap.find('#misaha-pass-price-breakdown').html(
-                '<div class="misaha-price-line"><span>Pass Price</span><span>' + fmt(basePrice) + '</span></div>' +
+                '<div class="misaha-price-line"><span>' + t('Pass Price') + '</span><span>' + fmt(basePrice) + '</span></div>' +
                 discLine +
-                '<div class="misaha-price-line total"><span>Total</span><span>' + fmt(final) + '</span></div>'
+                '<div class="misaha-price-line total"><span>' + t('Total') + '</span><span>' + fmt(finalAmt) + '</span></div>'
             );
         }
 
@@ -477,9 +497,9 @@
             const code = $wrap.find('#misaha-sm-discount-code').val().trim().toUpperCase();
             const $msg = $wrap.find('#misaha-sm-discount-msg');
 
-            if (!code) { showMsg($msg, 'Enter a discount code.', 'error'); return; }
+            if (!code) { showMsg($msg, t('Enter a discount code.'), 'error'); return; }
 
-            $(this).prop('disabled', true).text('Checking…');
+            $(this).prop('disabled', true).text(t('Checking…'));
 
             $.post(ajaxUrl, {
                 action: 'misaha_validate_discount',
@@ -495,13 +515,13 @@
                     renderPassPriceBreakdown(selectedPassPrice, discountData.discount_amount);
                 } else {
                     discountData = null;
-                    showMsg($msg, '❌ ' + (res.data ? res.data.message : 'Invalid code.'), 'error');
+                    showMsg($msg, '❌ ' + (res.data ? res.data.message : t('Invalid code.')), 'error');
                     renderPassPriceBreakdown(selectedPassPrice, 0);
                 }
             })
-            .fail(function () { showMsg($msg, '❌ Network error.', 'error'); })
+            .fail(function () { showMsg($msg, '❌ ' + t('Network error.'), 'error'); })
             .always(function () {
-                $wrap.find('#misaha-sm-apply-discount').prop('disabled', false).text('Apply');
+                $wrap.find('#misaha-sm-apply-discount').prop('disabled', false).text(t('Apply'));
             });
         });
 
@@ -509,14 +529,14 @@
         $wrap.on('click', '#misaha-sm-pay-now', function () {
             if (!isLoggedIn) { window.location.href = loginUrl; return; }
 
-            const $btn      = $(this).prop('disabled', true).text('Processing…');
+            const $btn      = $(this).prop('disabled', true).text(t('Processing…'));
             const $result   = $wrap.find('#misaha-pass-result').hide().removeClass('success error');
             const startDate = $wrap.find('#misaha-pass-start').val();
             const code      = $wrap.find('#misaha-sm-discount-code').val().trim().toUpperCase();
 
             if (!startDate) {
-                showResult($result, '❌ Please select a start date.', 'error');
-                $btn.prop('disabled', false).text('💳 Proceed to Payment');
+                showResult($result, '❌ ' + t('Please select a start date.'), 'error');
+                $btn.prop('disabled', false).text('💳 ' + t('Proceed to Payment'));
                 return;
             }
 
@@ -534,27 +554,26 @@
                     const d = res.data;
                     if (d.payment_url) {
                         showResult($result,
-                            '✅ Pass <strong>#' + d.pass_id + '</strong> created! Redirecting to payment…',
+                            '✅ ' + t('Pass') + ' <strong>#' + d.pass_id + '</strong> ' + t('created! Redirecting to payment…'),
                             'success'
                         );
                         setTimeout(function () { window.location.href = d.payment_url; }, 1800);
                     } else {
                         showResult($result,
-                            '✅ Pass <strong>#' + d.pass_id + '</strong> created!<br>' +
-                            'Valid: <strong>' + d.start_date + '</strong> → <strong>' + d.end_date + '</strong><br>' +
-                            'Total: <strong>' + fmt(d.final_price) + '</strong>',
+                            '✅ ' + t('Pass') + ' <strong>#' + d.pass_id + '</strong> ' + t('created! Total:') + ' <strong>' + fmt(d.final_price) + '</strong><br>' +
+                            t('Valid:') + ' <strong>' + d.start_date + '</strong> → <strong>' + d.end_date + '</strong>',
                             'success'
                         );
-                        $btn.text('Done!');
+                        $btn.text(t('Done!'));
                     }
                 } else {
                     showResult($result, '❌ ' + res.data.message, 'error');
-                    $btn.prop('disabled', false).text('💳 Proceed to Payment');
+                    $btn.prop('disabled', false).text('💳 ' + t('Proceed to Payment'));
                 }
             })
             .fail(function () {
-                showResult($result, '❌ Network error. Please try again.', 'error');
-                $btn.prop('disabled', false).text('💳 Proceed to Payment');
+                showResult($result, '❌ ' + t('Network error. Please try again.'), 'error');
+                $btn.prop('disabled', false).text('💳 ' + t('Proceed to Payment'));
             });
         });
 
