@@ -1,0 +1,291 @@
+/* ============================================================
+   Misaha Booking System — RTL (Arabic) Overrides
+   Loaded automatically when WordPress locale is ar_*
+   ============================================================ */
+
+/* ── Global Direction ───────────────────────────────────────── */
+.misaha-wrap,
+.misaha-dashboard,
+.misaha-login-prompt {
+    direction: rtl;
+    text-align: right;
+}
+
+/* ── Typography ─────────────────────────────────────────────── */
+.misaha-wrap,
+.misaha-wrap *,
+.misaha-dashboard *,
+.misaha-login-prompt * {
+    font-family: 'Tajawal', 'Inter', 'Segoe UI', Tahoma, sans-serif;
+    letter-spacing: 0 !important;
+}
+
+/* Google Fonts Tajawal for Arabic */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap');
+
+/* ── Step Indicator ─────────────────────────────────────────── */
+.misaha-steps {
+    direction: rtl;
+}
+
+/* ── Panel ───────────────────────────────────────────────────── */
+.misaha-panel-header {
+    flex-direction: row-reverse;
+}
+
+.misaha-panel-header .misaha-btn-ghost {
+    order: 1;
+}
+
+.misaha-panel-header .misaha-panel-title {
+    order: 0;
+}
+
+/* ── Back / Arrow Buttons ────────────────────────────────────── */
+.misaha-back,
+.misaha-sm-back {
+    direction: ltr;
+}
+
+/* ── Hall Grid ───────────────────────────────────────────────── */
+.misaha-hall-card {
+    text-align: center;
+}
+
+.misaha-hall-card::before {
+    transform-origin: right;
+}
+
+.misaha-hall-card:hover::before,
+.misaha-hall-card.selected::before {
+    transform: scaleX(1);
+    transform-origin: right;
+}
+
+/* ── Hall Meta ───────────────────────────────────────────────── */
+.misaha-hall-meta {
+    direction: rtl;
+}
+
+/* ── Date Picker ─────────────────────────────────────────────── */
+.misaha-date-picker {
+    flex-direction: row-reverse;
+}
+
+/* ── Selected Info Banner ────────────────────────────────────── */
+.misaha-selected-info,
+.misaha-hall-banner,
+.misaha-selected-seat-info {
+    direction: rtl;
+    text-align: right;
+}
+
+/* ── Slots Grid ──────────────────────────────────────────────── */
+.misaha-slots-grid {
+    direction: rtl;
+}
+
+.misaha-slot {
+    text-align: center;
+}
+
+/* ── Legend ───────────────────────────────────────────────────── */
+.misaha-legend,
+.misaha-seat-legend {
+    direction: rtl;
+    justify-content: flex-start;
+}
+
+.misaha-legend-item {
+    flex-direction: row-reverse;
+}
+
+/* ── Seat Map ────────────────────────────────────────────────── */
+.misaha-seat-row {
+    flex-direction: row-reverse;
+}
+
+.misaha-row-label {
+    order: 0;
+}
+
+/* ── Pass Cards ──────────────────────────────────────────────── */
+.misaha-pass-cards {
+    direction: rtl;
+}
+
+.misaha-pass-card {
+    text-align: center;
+}
+
+/* ── Start Date Row ──────────────────────────────────────────── */
+.misaha-start-date-row {
+    flex-direction: row-reverse;
+}
+
+/* ── Summary Card ────────────────────────────────────────────── */
+.misaha-summary-card {
+    direction: rtl;
+    text-align: right;
+}
+
+.misaha-summary-row {
+    flex-direction: row-reverse;
+}
+
+.misaha-summary-row .label {
+    text-align: right;
+}
+
+.misaha-summary-row .value {
+    text-align: left;
+}
+
+/* ── Discount Row ────────────────────────────────────────────── */
+.misaha-discount-row {
+    flex-direction: row-reverse;
+}
+
+.misaha-discount-msg {
+    text-align: right;
+}
+
+/* ── Price Breakdown ─────────────────────────────────────────── */
+.misaha-price-breakdown {
+    direction: rtl;
+}
+
+.misaha-price-line {
+    flex-direction: row-reverse;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.misaha-btn {
+    flex-direction: row-reverse;
+}
+
+.misaha-btn-lg {
+    text-align: center;
+}
+
+/* ── Booking Result ──────────────────────────────────────────── */
+.misaha-booking-result {
+    text-align: right;
+    direction: rtl;
+}
+
+/* ── Dashboard Header ────────────────────────────────────────── */
+.misaha-dash-header {
+    flex-direction: row-reverse;
+    text-align: right;
+}
+
+/* ── Stat Cards ──────────────────────────────────────────────── */
+.misaha-stat-cards {
+    direction: rtl;
+}
+
+.misaha-stat-card {
+    text-align: right;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────────── */
+.misaha-dashboard-tabs {
+    direction: rtl;
+}
+
+/* ── Booking Items ───────────────────────────────────────────── */
+.misaha-bookings-list {
+    direction: rtl;
+}
+
+.misaha-booking-item {
+    flex-direction: row-reverse;
+    text-align: right;
+}
+
+.misaha-booking-item.upcoming {
+    border-left: none;
+    border-right: 4px solid var(--mis-primary);
+}
+
+.misaha-booking-item.active-pass {
+    border-left: none;
+    border-right: 4px solid var(--mis-success);
+}
+
+.misaha-booking-item.expired-pass {
+    border-left: none;
+    border-right: 4px solid var(--mis-border);
+}
+
+.misaha-booking-item:hover {
+    transform: translateX(-3px);
+}
+
+.misaha-booking-details {
+    text-align: right;
+}
+
+.misaha-booking-meta {
+    direction: rtl;
+    justify-content: flex-start;
+}
+
+.misaha-booking-badges {
+    align-items: flex-start;
+}
+
+/* ── Payments Table ──────────────────────────────────────────── */
+.misaha-payments-table th,
+.misaha-payments-table td {
+    text-align: right;
+}
+
+/* ── Login Prompt ────────────────────────────────────────────── */
+.misaha-login-prompt {
+    direction: rtl;
+    text-align: center;
+}
+
+/* ── Empty State ─────────────────────────────────────────────── */
+.misaha-empty-state {
+    direction: rtl;
+}
+
+/* ── Stage Label ─────────────────────────────────────────────── */
+.misaha-stage-label {
+    direction: rtl;
+}
+
+/* ── Pass Countdown ──────────────────────────────────────────── */
+.misaha-pass-countdown {
+    direction: rtl;
+}
+
+/* ── Discount Tag ────────────────────────────────────────────── */
+.misaha-discount-tag {
+    direction: rtl;
+}
+
+/* ── Responsive RTL Overrides ────────────────────────────────── */
+@media (max-width: 640px) {
+    .misaha-date-picker {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .misaha-booking-item {
+        flex-direction: column;
+        text-align: right;
+    }
+
+    .misaha-booking-badges {
+        flex-direction: row-reverse;
+    }
+
+    .misaha-dash-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
