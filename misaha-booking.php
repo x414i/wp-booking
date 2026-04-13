@@ -21,6 +21,7 @@ define( 'MISAHA_URL',        plugin_dir_url( __FILE__ ) );
 define( 'MISAHA_PLUTO_KEY',  '984adf4c-44e1-418f-829b' );   // Test key
 
 // ─── Core Includes ───────────────────────────────────────────────────────────
+require_once MISAHA_DIR . 'includes/i18n.php';
 require_once MISAHA_DIR . 'includes/database-setup.php';
 require_once MISAHA_DIR . 'includes/booking-functions.php';
 require_once MISAHA_DIR . 'includes/payment-gateway.php';
@@ -114,6 +115,16 @@ function misaha_enqueue_assets() {
         MISAHA_VERSION
     );
 
+    // RTL stylesheet
+    if ( misaha_is_rtl() ) {
+        wp_enqueue_style(
+            'misaha-rtl-style',
+            MISAHA_URL . 'assets/css/rtl-style.css',
+            array( 'misaha-style' ),
+            MISAHA_VERSION
+        );
+    }
+
     wp_enqueue_script(
         'misaha-script',
         MISAHA_URL . 'assets/js/booking-script.js',
@@ -129,6 +140,9 @@ function misaha_enqueue_assets() {
         'siteUrl'    => get_site_url(),
         'isLoggedIn' => is_user_logged_in() ? 1 : 0,
         'loginUrl'   => wp_login_url( get_permalink() ),
+        'isRtl'      => misaha_is_rtl() ? 1 : 0,
+        'locale'     => determine_locale(),
+        'i18n'       => misaha_js_translations(),
     ) );
 }
 
